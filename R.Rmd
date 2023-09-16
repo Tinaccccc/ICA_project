@@ -1,0 +1,1294 @@
+---
+output:
+  html_document:
+    toc: yes
+    number_sections: yes
+    keep_md: yes
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+#basic data resource 
+```{NO.0,ALl data}
+library(UpSetR)
+library(tidyverse)
+library(data.table)
+library(dplyr)
+
+install.packages("openxlsx")
+library(openxlsx)
+
+myread <- function(file){
+  fread(file) %>% 
+  filter(`Adjusted P-value`<=0.05) %>% 
+  arrange(`Adjusted P-value`) %>% 
+  as_tibble()
+} 
+
+adhd_gwas <- read_lines("~/Desktop/111/ADHD_GWAS.csv")
+
+asd_gwas_prioritized <- read_lines("~/Desktop/111/ASD_GWAS_prioritized .csv")
+
+asd_wes_fdr_0.001 <- read_lines("~/Desktop/111/ASD_WES_FDR_0.001 .csv")
+
+asd_wes_fdr_0.05 <- read_lines("~/Desktop/111/ASD_WES_FDR_0.05 .csv")
+
+asd_wgs_fdr_0.1 <- read_lines("~/Desktop/111/ASD_WGS_FDR_0.1 .csv")
+
+bp_gwas_prioritized <- read_lines("~/Desktop/111/BP_GWAS_prioritized .csv")
+
+bp_wes_top10 <- read_lines("~/Desktop/111/BP_WES_top10 .csv")
+
+dp_gwas_prioritized <- read_lines("~/Desktop/111/DP_GWAS_prioritized .csv")
+
+dp_wes_fdr_0.1<- read_lines("~/Desktop/111/DP_WES_FDR_0.1.csv")
+
+scz_gwas_prioritized <- read_lines("~/Desktop/111/SCZ_GWAS_prioritized .csv")
+
+scz_wes_fdr_0.05<- read_lines("~/Desktop/111/SCZ_WES_FDR_0.05 .csv")
+
+scz_wes_pval<- read_lines("~/Desktop/111/SCZ_WES_pval_2.14e-6 .csv")
+
+asd_gwas_bp <- myread("~/Desktop/enrichr/enrichr_ASD_GWAS_prioritized/ASD_GWAS_prioritized_GO_Biological_Process_2023_table.txt" )
+#30
+write.xlsx(asd_gwas_bp, "asd_gwas_bp.xlsx", sheetName = "asd_gwas_bp")
+
+asd_wes_f0.001_bp <- myread("~/Desktop/enrichr/enrichr_ASD_WES_FDR_0.001/ASD_WES_FDR_0.001_GO_Biological_Process_2023_table.txt")
+#158
+write.xlsx(asd_wes_f0.001_bp, "asd_wes_f0.001_bp.xlsx", sheetName = "asd_wes_f0.001_bp")
+
+
+asd_wgs_bp <- myread("~/Desktop/enrichr/enrichr_ASD_WGS_FDR_0.1/ASD_WGS_FDR_0.1_GO_Biological_Process_2023_table.txt") 
+#95
+write.xlsx(asd_wgs_bp, "asd_wgs_bp.xlsx", sheetName = "asd_wgs_bp")
+
+
+asd_gwas_cc <- myread("~/Desktop/enrichr/enrichr_ASD_GWAS_prioritized/ASD_GWAS_prioritized_GO_Cellular_Component_2023_table.txt" )
+#7
+write.xlsx(asd_gwas_cc, "asd_gwas_cc.xlsx", sheetName = "asd_gwas_cc")
+
+asd_wes_cc <- myread("~/Desktop/enrichr/enrichr_ASD_WES_FDR_0.001/ASD_WES_FDR_0.001_GO_Cellular_Component_2023_table.txt")
+#28
+write.xlsx(asd_wes_cc, "asd_wes_cc.xlsx", sheetName = "asd_wes_cc")
+
+asd_wgs_cc <- myread("~/Desktop/enrichr/enrichr_ASD_WGS_FDR_0.1/ASD_WGS_FDR_0.1_GO_Cellular_Component_2023_table.txt") 
+#24
+write.xlsx(asd_wgs_cc, "asd_wgs_cc.xlsx", sheetName = "asd_wgs_cc")
+
+asd_gwas_mf <- myread("~/Desktop/enrichr/enrichr_ASD_GWAS_prioritized/ASD_GWAS_prioritized_GO_Molecular_Function_2023_table.txt" )
+#0
+
+asd_wes_mf <- myread("~/Desktop/enrichr/enrichr_ASD_WES_FDR_0.001/ASD_WES_FDR_0.001_GO_Molecular_Function_2023_table.txt")
+#35
+write.xlsx(asd_wes_mf, "asd_wes_mf.xlsx", sheetName = "asd_wes_mf")
+
+asd_wgs_mf <- myread("~/Desktop/enrichr/enrichr_ASD_WGS_FDR_0.1/ASD_WGS_FDR_0.1_GO_Molecular_Function_2023_table.txt") 
+#32
+write.xlsx(asd_wgs_mf, "asd_wgs_mf.xlsx", sheetName = "asd_wgs_mf")
+
+scz_gwas_bp <- myread("~/Desktop/enrichr/enrichr_SCZ_GWAS_prioritized/SCZ_GWAS_prioritized_GO_Biological_Process_2023_table.txt" )
+#4
+write.xlsx(scz_gwas_bp, "scz_gwas_bp.xlsx", sheetName = "scz_gwas_bp")
+
+scz_wes_p2.14_bp <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_pval_2.14e-6/SCZ_WES_pval_2.14e-6_GO_Biological_Process_2023_table.txt")
+#72
+write.xlsx(scz_wes_p2.14_bp , "scz_wes_p2.14_bp.xlsx", sheetName = "scz_wes_p2.14_bp")
+
+scz_wes_f0.05_bp <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_FDR_0.05/SCZ_WES_FDR_0.05_GO_Biological_Process_2023_table.txt") 
+#11
+write.xlsx(scz_wes_f0.05_bp, "scz_wes_f0.05_bp .xlsx", sheetName = "scz_wes_f0.05_bp ")
+
+scz_gwas_cc <- myread("~/Desktop/enrichr/enrichr_SCZ_GWAS_prioritized/SCZ_GWAS_prioritized_GO_Cellular_Component_2023_table.txt" )
+#2
+write.xlsx(scz_gwas_cc, "scz_gwas_cc.xlsx", sheetName = "scz_gwas_cc")
+
+scz_wes_p2.14_cc <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_pval_2.14e-6/SCZ_WES_pval_2.14e-6_GO_Cellular_Component_2023_table.txt")
+#8
+write.xlsx(scz_wes_p2.14_cc, "scz_wes_p2.14_cc.xlsx", sheetName = "scz_wes_p2.14_cc")
+
+scz_wes_f0.05_cc <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_FDR_0.05/SCZ_WES_FDR_0.05_GO_Cellular_Component_2023_table.txt") 
+#6
+write.xlsx(scz_wes_f0.05_cc, "scz_wes_f0.05_cc.xlsx", sheetName = "scz_wes_f0.05_cc")
+
+scz_gwas_mf <- myread("~/Desktop/enrichr/enrichr_SCZ_GWAS_prioritized/SCZ_GWAS_prioritized_GO_Molecular_Function_2023_table.txt" )
+#0
+
+scz_wes_p2.14_mf <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_pval_2.14e-6/SCZ_WES_pval_2.14e-6_GO_Molecular_Function_2023_table.txt")
+#15
+write.xlsx(scz_wes_p2.14_mf, "scz_wes_p2.14_mf.xlsx", sheetName = "scz_wes_p2.14_mf")
+
+scz_wes_f0.05_mf <- myread("~/Desktop/enrichr/enrichr_SCZ_WES_FDR_0.05/SCZ_WES_FDR_0.05_GO_Molecular_Function_2023_table.txt") 
+#6
+write.xlsx(scz_wes_f0.05_mf, "scz_wes_f0.05_mf.xlsx", sheetName = "scz_wes_f0.05_mf")
+
+dp_gwas_bp <- myread("~/Desktop/enrichr/enrichr_DP_GWAS_prioritized/DP_GWAS_prioritized_GO_Biological_Process_2023_table.txt")
+#42
+write.xlsx(dp_gwas_bp, "dp_gwas_bp.xlsx", sheetName = "dp_gwas_bp")
+
+dp_gwas_cc <- myread("~/Desktop/enrichr/enrichr_DP_GWAS_prioritized/DP_GWAS_prioritized_GO_Cellular_Component_2023_table.txt")
+#0
+
+dp_gwas_mf <- myread("~/Desktop/enrichr/enrichr_DP_GWAS_prioritized/DP_GWAS_prioritized_GO_Molecular_Function_2023_table.txt")
+#8
+write.xlsx(dp_gwas_mf, "dp_gwas_mf.xlsx", sheetName = "dp_gwas_mf")
+
+dp_wes_f0.1_bp <- myread("~/Desktop/enrichr/enrichr_DP_WES_FDR_0.1/DP_WES_FDR_0.1_GO_Biological_Process_2023_table.txt")
+#0
+
+dp_wes_f0.1_cc <- myread("~/Desktop/enrichr/enrichr_DP_WES_FDR_0.1/DP_WES_FDR_0.1_GO_Cellular_Component_2023_table.txt")
+#0
+
+dp_wes_f0.1_mf <- myread("~/Desktop/enrichr/enrichr_DP_WES_FDR_0.1/DP_WES_FDR_0.1_GO_Molecular_Function_2023_table.txt")
+#0
+
+bp_gwas_bp <- myread("~/Desktop/enrichr/enrichr_BP_GWAS_prioritized/BP_GWAS_prioritized_GO_Biological_Process_2023_table.txt")
+#0
+
+bp_gwas_cc <- myread("~/Desktop/enrichr/enrichr_BP_GWAS_prioritized/BP_GWAS_prioritized_GO_Cellular_Component_2023_table.txt")
+#0
+
+bp_gwas_mf <- myread("~/Desktop/enrichr/enrichr_BP_GWAS_prioritized/BP_GWAS_prioritized_GO_Molecular_Function_2023_table.txt")
+#0
+
+bp_wes_top10_bp <- myread("~/Desktop/enrichr/enrichr_BP_WES_top10/BP_WES_top10_GO_Biological_Process_2023_table.txt")
+#64
+write.xlsx(bp_wes_top10_bp, "bp_wes_top10_bp.xlsx", sheetName = "bp_wes_top10_bp")
+
+bp_wes_top10_cc <- myread("~/Desktop/enrichr/enrichr_BP_WES_top10/BP_WES_top10_GO_Cellular_Component_2023_table.txt")
+#0
+
+bp_wes_top10_mf <- myread("~/Desktop/enrichr/enrichr_BP_WES_top10/BP_WES_top10_GO_Molecular_Function_2023_table.txt")
+#20
+write.xlsx(bp_wes_top10_mf, "bp_wes_top10_mf.xlsx", sheetName = "bp_wes_top10_mf")
+
+adhd_gwas_bp <- myread("~/Desktop/enrichr/enrichr_ADHD_GWAS/ADHD_GWAS_GO_Biological_Process_2023_table.txt")
+#0
+
+adhd_gwas_cc <- myread("~/Desktop/enrichr/enrichr_ADHD_GWAS/ADHD_GWAS_GO_Cellular_Component_2023_table.txt")
+#0
+
+adhd_gwas_mf <- myread("~/desktop/enrichr/enrichr_ADHD_GWAS/ADHD_GWAS_GO_Molecular_Function_2023_table.txt")
+#0
+
+
+
+ADHD_GWAS_pathway <- myread("~/Desktop/enrichr_pathway/ADHD_GWAS_pathway.txt")
+#0
+
+ASD_GWAS_prioritized_pathway <- myread("~/Desktop/enrichr_pathway/ASD_GWAS_prioritized_pathway.txt")
+#0
+
+ASD_WES_FDR_0.001._pathway <- myread("~/Desktop/enrichr_pathway/ASD_WES_FDR_0.001._pathway.txt")
+#6
+write.xlsx(ASD_WES_FDR_0.001._pathway, "ASD_WES_FDR_0.001._pathway.xlsx", sheetName = "ASD_WES_FDR_0.001._pathway")
+
+ASD_WES_FDR_0.05_pathway<- myread("~/Desktop/enrichr_pathway/ASD_WES_FDR_0.05_pathway.txt")
+#55
+write.xlsx(ASD_WES_FDR_0.05_pathway, "ASD_WES_FDR_0.05_pathway.xlsx", sheetName = "ASD_WES_FDR_0.05_pathway")
+
+ASD_WGS_FDR_0.1_pathway<- myread("~/Desktop/enrichr_pathway/ASD_WGS_FDR_0.1_pathway.txt")
+#7
+write.xlsx(ASD_WGS_FDR_0.1_pathway, "ASD_WGS_FDR_0.1_pathway.xlsx", sheetName = "ASD_WGS_FDR_0.1_pathway")
+
+BP_GWAS_prioritized_pathway<- myread("~/Desktop/enrichr_pathway/BP_GWAS_prioritized_pathway.txt")
+#0
+
+BP_WES_top10_pathway<- myread("~/Desktop/enrichr_pathway/BP_WES_top10_pathway.txt")
+#1
+write.xlsx(BP_WES_top10_pathway, "BP_WES_top10_pathway.xlsx", sheetName = "BP_WES_top10_pathway")
+
+DP_GWAS_prioritized_pathway<- myread("~/Desktop/enrichr_pathway/DP_GWAS_prioritized_pathway.txt")
+#0
+
+DP_WES_FDR_0.1_pathway<- myread("~/Desktop/enrichr_pathway/DP_WES_FDR_0.1_pathway.txt")
+#0
+
+SCZ_GWAS_prioritized_pathway<- myread("~/Desktop/enrichr_pathway/SCZ_GWAS_prioritized_pathway.txt")
+#9
+write.xlsx(SCZ_GWAS_prioritized_pathway, "SCZ_GWAS_prioritized_pathway.xlsx", sheetName = "SCZ_GWAS_prioritized_pathway")
+
+SCZ_WES_FDR_0.05_pathway<- myread("~/Desktop/enrichr_pathway/SCZ_WES_FDR_0.05_pathway.txt")
+#3
+write.xlsx(SCZ_WES_FDR_0.05_pathway, "SCZ_WES_FDR_0.05_pathway.xlsx", sheetName = "SCZ_WES_FDR_0.05_pathway")
+
+SCZ_WES_pval_2.14e6_pathway<- myread("~/Desktop/enrichr_pathway/SCZ_WES_pval_2.14e-6_pathway.txt")
+#15
+write.xlsx(SCZ_WES_pval_2.14e6_pathway, "SCZ_WES_pval_2.14e6_pathway.xlsx", sheetName = "SCZ_WES_pval_2.14e6_pathway")
+
+```
+
+```{upset R - ALL 5}
+
+ALL_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized,ASD_wes_fdr_0.05=asd_wes_fdr_0.05, ASD_wgs_fdr_0.1=asd_wgs_fdr_0.1,BP_gwas_prioritized=bp_gwas_prioritized, BP_wes_top10 = bp_wes_top10,DP_gwas_prioritized=dp_gwas_prioritized,DP_wes_fdr_0.1=dp_wes_fdr_0.1,SCZ_gwas_prioritized=scz_gwas_prioritized,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,ADHD_gwas=adhd_gwas)
+
+upset(fromList(ALL_listInput),set_size.show=T,nsets=12,nintersects = NA,set_size.scale_max = 220,order.by = "freq")
+
+```
+
+```{coding for find exactly gene name of intersections }
+
+#bp_gwas_prioritized / dp_gwas_prioritized / scz_gwas_prioritized : FURIN
+
+bp1 <- c("STK4","ADD3","FURIN","HAPLN4","LMAN2L","PACSIN2","DCLK3","TMEM258", "GNL3","LMAN2L","PACS1","PACSIN2","LRRC57","HTR6","MCHR1")
+
+dp1 <- c("NEGR1","PRMT6","GPR27"    ,"ARAP3","ZNHIT1","ASPH","CKS2","HOGA1","KLCI","FURIN","MT1X","ALDH16A1","MACROD2")
+
+scz1 <- c("AC068490.2","ACE","ACTR1B","AKT3","ALMS1P","ASPHD1","ATG13","ATP2A2","BCL11B","BCL2L12","BNIP3L","C12orf43","CACNA1C","CALN1","CISD2","CLCN3","CNTN4","CREB3L4","CRHR1","CSMD1","CTD-2008L17.2","CUL9","CYP7B1","DARS2","DCC","DCLK3","DDHD2","DLGAP2","DNAJA3","DPYD","EMB","EMX1","ENOX1","ENSG00000262319","EPN2","EYS" ,"FAM114A2","FAM216A","FAM83D","FTSJ2","FURIN","GABBR2","GATAD2A","GPM6A","GPR98","GRAMD1B","GRIN2A","GRM1","HYI","IL1RAPL1","IMMP2L","INO80E","IRF3","KANSL1","KIAA1549","KLF6","LINC00320","LINC01068","LINC01088","LRRC4B","LSM1","MAD1L1","MAN2A1","MAPK3","MAPT","MLXIP","MOB4","MSI2","MYO19","NAB2","NDFIP2","NEBL","NEGR1","NLGN4X","NRIP1","NXPH1","OPCML","PAK6","PCCB","PCDHA2","PCDHA8","PCGF3","PCNXL3","PDE4B","PDIA3","PJA1","PLCH2","PSMA4","PTPRD","R3HDM2","RERE","RNASEH2C","RP11-10L12.4","RP11-165J3.6","RP11-399D6.2","RP11-490G2.2","RP11-507B12.2","RP11-53O19.3","RP11-586K2.1","RP11-73M18.2","SETD6","SF3B1","SGCD","SLC39A8","SLC4A10","SLC9B1","SNAP91","SP4","THAP8","THOC7","TMTC1","TRPC4","TSNARE1","TXNRD1","WBSCR17","WDR76","WSCD2","ZNF804A","ZNF823","ZNF835")
+
+intersect(bp1,dp1)
+intersect(bp1,scz1)
+intersect(dp1,scz1)
+
+asdwes12<-c( intersect(asd_wes_fdr_0.001,asd_wes_fdr_0.05))
+
+
+#all asd/adhd:"FOXP1"
+
+allasd <-c( intersect(asdwes12,asd_wgs_fdr_0.1))
+
+intersect(allasd,adhd_gwas)
+
+#adhd/asdwes0.05:"PTPRF"
+intersect(asd_wes_fdr_0.05,adhd_gwas)
+
+#bpgwas/asdwes0.05:"PACS1"
+intersect(asd_wes_fdr_0.05,bp_gwas_prioritized)
+
+#asdwgs0.1/sczwes0.05/sczwespval:"SETD1A"
+asdwgs0.1_sczwes0.05<-c(intersect(asd_wgs_fdr_0.1,scz_wes_fdr_0.05))
+intersect(asdwgs0.1_sczwes0.05,scz_wes_pval)
+
+#dpwes0.1/sczgwas:"CLCN3"
+intersect(dp_wes_fdr_0.1,scz_gwas_prioritized)
+
+#dpgwas/bpgwas/sczgwas:"FURIN"
+
+#dpgwas/sczgwas:"NEGR1"
+intersect(dp_gwas_prioritized,scz_gwas_prioritized)
+
+#bpgwas/sczgwas:"DCLK3"
+intersect(bp_gwas_prioritized,scz_gwas_prioritized)
+
+#dpwes0.1/adhdgwas:"MON1A"
+intersect(dp_wes_fdr_0.1,adhd_gwas)
+
+#bpwestop10/sczwes0.05:"AKAP11"
+intersect(bp_wes_top10,scz_wes_fdr_0.05)
+
+#asdgwas/dpgwas: "MACROD2"
+intersect(asd_gwas_prioritized,dp_gwas_prioritized)
+
+#sczwes0.05/asdwes0.001/asdwgs0.1/asdwes0.05:"ASH1L" "KDM6B"
+asdwgs0.1_asdwes0.05<-c(intersect(asd_wgs_fdr_0.1,asd_wes_fdr_0.05))
+asdwgs0.1_asdwes0.05_asdwes0.001<-c(intersect(asdwgs0.1_asdwes0.05,asd_wes_fdr_0.001))
+asdwgs0.1_asdwes0.05_asdwes0.001_sczwes0.05<-c(intersect(asdwgs0.1_asdwes0.05_asdwes0.001,scz_wes_fdr_0.05))
+
+#sczwes0.05/asdwes0.05:"FAM120A" "ZMYM2"  
+intersect(scz_wes_fdr_0.05,asd_wes_fdr_0.05)
+
+#adhd/sczgwas:"HYI" "DCC"
+intersect(adhd_gwas,scz_gwas_prioritized)
+
+#sczwespval/sczwes0.05/sczgwas:"GRIN2A" "SP4"   
+sczwes <-c(intersect(scz_wes_pval,scz_wes_fdr_0.05))
+allscz<-c(intersect(sczwes,scz_gwas_prioritized))
+
+#asdgwas/adhd:"XRN2" "NKX2-4"
+intersect(asd_gwas_prioritized,adhd_gwas)
+
+#sczgwas/asdwes0.05:"ATG13"  "GABBR2" "MLXIP" 
+intersect(scz_gwas_prioritized,asd_wes_fdr_0.05)
+
+#sczwespval/sczwes0.05:RB1CC1,HERC1,GRIA3,CACNA1G,TRIO,XPO7,CUL1
+intersect(scz_wes_pval,scz_wes_fdr_0.05)
+
+```
+
+#The upset R / Gene ontology analysis / pathway analysis of insight just one disease (contain all cutoff)
+```{upset R - ALL ASD}
+
+#ASD
+ASD_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized, ASD_wes_fdr_0.001 = asd_wes_fdr_0.001, ASD_wes_fdr_0.05=asd_wes_fdr_0.05, ASD_wgs_fdr_0.1=asd_wgs_fdr_0.1)
+
+upset(fromList(ASD_listInput), order.by = "freq")
+
+upset(fromList(ASD_listInput), sets = c("ASD_wes_fdr_0.001","ASD_wes_fdr_0.05","ASD_wgs_fdr_0.1"), order.by = "freq")
+
+```
+```{Gene ontology - only ASD}
+
+#ASD_GO_bp (gwas_wes:3)(gwas_wgs:0)
+
+shared_asd_gwas_wes_bp <- inner_join(asd_gwas_bp, asd_wes_f0.001_bp , by="Term", suffix=c(".asd.gwas.bp",".asd.wes.bp"))
+
+shared_asd_gwas_wes_bp$Term
+
+shared_asd_all_bp <- inner_join(asd_wes_f0.001_bp , asd_wgs_bp, by="Term", suffix=c(".asd.wes.bp", ".asd.wgs.bp")) %>% 
+  inner_join(asd_gwas_bp)
+
+shared_asd_all_bp$Term
+
+inner_join(asd_gwas_bp , asd_wgs_bp, by="Term")
+
+#ASD_GO_cc(gwas_wes_wgs:3)
+
+shared_asd_gwas_wes_cc <- inner_join(asd_gwas_cc, asd_wes_cc, by="Term", suffix=c(".asd.gwas.cc",".asd.wes.cc"))
+
+shared_asd_gwas_wes_cc$Term
+
+inner_join(asd_gwas_cc, asd_wgs_cc, by="Term")
+
+shared_allasd_cc <- inner_join(asd_wes_cc, asd_wgs_cc, by="Term", suffix=c(".asd.we.cc", ".asd.wgs.cc")) %>% 
+  inner_join(asd_gwas_cc)
+
+shared_allasd_cc$Term
+
+#ASD_GO_mf(gwas_wes_wgs:0)(wes_wgs:21)
+
+shared_asd_gwas_wes_mf <- inner_join(asd_gwas_mf, asd_wes_mf, by="Term", suffix=c(".asd.gwas.mf",".asd.wes.mf"))
+
+shared_asd_gwas_wes_mf$Term
+
+inner_join(asd_gwas_mf, asd_wgs_mf, by="Term")
+
+shared_asd_wes_wgs_mf<-inner_join(asd_wes_mf, asd_wgs_mf, by="Term")
+
+shared_asd_wes_wgs_mf$Term
+
+shared_allasd_mf <- inner_join(asd_wes_mf, asd_wgs_mf, by="Term", suffix=c(".asd.we.mf", ".asd.wgs.mf")) %>% 
+  inner_join(asd_gwas_mf)
+
+shared_allasd_mf$Term
+
+```
+```{pathway analysis - only ASD}
+
+ASD_GWAS_prioritized_pathway(x)
+ASD_WES_FDR_0.001._pathway(6)
+ASD_WES_FDR_0.05_pathway(55)
+ASD_WGS_FDR_0.1_pathway(7)
+
+#only asd wes/wgs available:7
+
+shared_allasd_pathway <- inner_join(ASD_WES_FDR_0.05_pathway,ASD_WGS_FDR_0.1_pathway, by="Term", suffix=c(".asd.wes.pathway",".asd.wgs.pathway"))
+
+ shared_allasd_pathway$Term
+
+```
+
+```{upset R - ALL BP}
+
+BP_listInput <- list(BP_gwas_prioritized=bp_gwas_prioritized, BP_wes_top10 = bp_wes_top10)
+
+upset(fromList(BP_listInput), order.by = "freq")
+#not shared
+
+```
+```{Gene ontology - only BP}
+
+#BP_GO_dp(gwas_wes:0)
+
+shared_bp_gwas_wes_bp <- inner_join(bp_gwas_bp,bp_wes_top10_bp, by="Term", suffix=c(".bp.gwas.bp",".bp.wes.bp"))
+
+shared_bp_gwas_wes_bp$Term
+
+#BP_GP_cc(gwas_wes:0)
+
+shared_bp_gwas_wes_cc <- inner_join(bp_gwas_cc,bp_wes_top10_cc, by="Term", suffix=c(".bp.gwas.cc",".bp.wes.cc"))
+
+shared_bp_gwas_wes_cc$Term
+
+#BP_GP_mf(gwas_wes:0)
+
+shared_bp_gwas_wes_mf <- inner_join(bp_gwas_mf,bp_wes_f0.1_mf, by="Term", suffix=c(".bp.gwas.md",".bp.wes.mf"))
+
+shared_bp_gwas_wes_mf$Term
+
+```
+```{parhway analysis - only BP}
+
+BP_GWAS_prioritized_pathway(0)
+BP_WES_top10_pathway(1)
+
+```
+
+
+```{upset R - ALL DP}
+
+DP_listInput <- list(DP_gwas_prioritized=dp_gwas_prioritized,DP_wes_fdr_0.1=dp_wes_fdr_0.1)
+
+upset(fromList(DP_listInput), order.by = "freq")
+#not shared
+
+```
+```{Gene ontology - only DP}
+#DP_GO_dp(gwas_wes:0)
+
+shared_dp_gwas_wes_bp <- inner_join(dp_gwas_bp,dp_wes_f0.1_bp, by="Term", suffix=c(".dp.gwas.bp",".dp.wes.bp"))
+
+shared_dp_gwas_wes_bp$Term
+
+#DP_GP_cc(gwas_wes:0)
+
+shared_dp_gwas_wes_cc <- inner_join(dp_gwas_cc,dp_wes_f0.1_cc, by="Term", suffix=c(".dp.gwas.cc",".dp.wes.cc"))
+
+shared_dp_gwas_wes_cc$Term
+
+#DP_GP_mf(gwas_wes:0)
+
+shared_dp_gwas_wes_mf <- inner_join(dp_gwas_mf,dp_wes_f0.1_mf, by="Term", suffix=c(".dp.gwas.md",".dp.wes.mf"))
+
+shared_dp_gwas_wes_mf$Term
+
+```
+```{pathway analysis - only DP}
+
+DP_GWAS_prioritized_pathway(0)
+DP_WES_FDR_0.1_pathway(0)
+
+```
+
+
+```{upset R - ALL SCZ}
+
+SCZ_listInput <- list(SCZ_gwas_prioritized=scz_gwas_prioritized,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,SCZ_wes_pval=scz_wes_pval)
+
+
+upset(fromList(SCZ_listInput), order.by = "freq")
+
+```
+```{Gene ontology - only SCZ}
+
+#SCZ_GO_bp(gwas_wesp2.14 :0)
+
+shared_scz_gwas_wes_bp <- inner_join(scz_gwas_bp, scz_wes_p2.14_bp, by="Term", suffix=c(".scz.gwas.bp",".scz.wes.p2.14.bp"))
+
+shared_scz_gwas_wes_bp$Term
+
+#SCZ_GO_cc(gwas_wesp2.14 :0)
+
+shared_scz_gwas_wes_cc <- inner_join(scz_gwas_cc, scz_wes_p2.14_cc, by="Term", suffix=c(".scz.gwas.cc",".scz.wes.p2.14.cc"))
+
+shared_scz_gwas_wes_cc$Term
+
+#SCZ_GO_mf(gwas_wesp2.14 :0)
+
+shared_scz_gwas_wes_mf <- inner_join(scz_gwas_mf, scz_wes_p2.14_mf, by="Term", suffix=c(".scz.gwas.mf",".scz.wes.p2.14.mf"))
+
+shared_scz_gwas_wes_mf$Term
+
+#SCZ_GO_bp_2(gwas_wesf0.05 :0)
+
+shared_scz_gwas_wes2_bp <- inner_join(scz_gwas_bp, scz_wes_f0.05_bp, by="Term", suffix=c(".scz.gwas.bp",".scz.wes.f0.05.bp"))
+
+shared_scz_gwas_wes2_bp$Term
+
+#SCZ_GO_cc_2(gwas_wesf0.05 :0)
+
+shared_scz_gwas_wes2_cc <- inner_join(scz_gwas_cc, scz_wes_f0.05_cc, by="Term", suffix=c(".scz.gwas.cc",".scz.wes.f0.05.cc"))
+
+shared_scz_gwas_wes2_cc$Term
+
+#SCZ_GO_mf_2
+
+shared_scz_gwas_wes2_mf <- inner_join(scz_gwas_mf, scz_wes_f0.05_mf, by="Term", suffix=c(".scz.gwas.mf",".scz.wes.f0.05.mf"))
+
+shared_scz_gwas_wes2_mf$Term
+
+```
+```{pathway analysis - only SCZ}
+
+SCZ_GWAS_prioritized_pathway(9)
+SCZ_WES_FDR_0.05_pathway(3)
+SCZ_WES_pval_2.14e6_pathway(15)
+
+#gwas/wes:4
+
+shared_allscz_pathway <- inner_join(SCZ_GWAS_prioritized_pathway,SCZ_WES_pval_2.14e6_pathway, by="Term", suffix=c(".scz.gwas.pathway",".scz.wes.pathway"))
+
+ shared_allscz_pathway$Term
+
+```
+
+#The upset / Gene ontology analysis / pathway analysis of insight disease combinations (GWAS/WES)
+```{upset R - ADHD and ASD - only GWAS}
+
+ADHD_ASD_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized,ADHD_gwas=adhd_gwas)
+
+upset(fromList(ADHD_ASD_listInput), order.by = "freq")
+
+```
+```{upset R - ADHD and BP - only GWAS}
+
+ADHD_BP_listInput <- list(BP_gwas_prioritized=bp_gwas_prioritized,ADHD_gwas=adhd_gwas)
+
+upset(fromList(ADHD_BP_listInput), order.by = "freq")
+#not shared
+
+```
+```{upset R - ADHD and DP - only GWAS}
+
+ADHD_DP_listInput <- list(DP_gwas_prioritized=dp_gwas_prioritized,ADHD_gwas=adhd_gwas)
+
+upset(fromList(ADHD_DP_listInput), order.by = "freq")
+
+```
+```{upset R - ADHD and SCZ - only GWAS}
+
+ADHD_SCZ_listInput <- list(SCZ_gwas_prioritized=scz_gwas_prioritized,ADHD_gwas=adhd_gwas)
+
+upset(fromList(ADHD_SCZ_listInput), order.by = "freq")
+
+```
+
+```{upset R - BP and DP}
+
+BP_DP_listInput <- list(BP_gwas_prioritized=bp_gwas_prioritized, BP_wes_top10 = bp_wes_top10,DP_gwas_prioritized=dp_gwas_prioritized,DP_wes_fdr_0.1=dp_wes_fdr_0.1)
+
+upset(fromList(BP_DP_listInput), order.by = "freq")
+
+```
+
+```{upset R - ASD and SCZ}
+
+ASD_SCZ_listInput <- list(SCZ_gwas_prioritized=scz_gwas_prioritized,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,SCZ_wes_pval=scz_wes_pval,ASD_gwas_prioritized=asd_gwas_prioritized,ASD_wes_fdr_0.05=asd_wes_fdr_0.05)
+
+upset(fromList(ASD_SCZ_listInput), order.by = "freq")
+
+```
+```{Gene ontology - ASD and SCZ - WES}
+
+#ASD_SCZ_GO_bp(16)
+
+shared_asd_scz_bp_wes <- inner_join(asd_wes_f0.001_bp, scz_wes_p2.14_bp, by="Term", suffix=c(".asd.wes.bp",".scz.wes.bp"))
+
+shared_asd_scz_bp_wes$Term
+
+#ASD_SCZ_GO_cc(5)
+
+shared_asd_scz_cc_wes <- inner_join(asd_wes_cc, scz_wes_p2.14_cc, by="Term", suffix=c(".asd.wes.cc",".scz.wes.cc"))
+
+shared_asd_scz_cc_wes$Term
+
+#ASD_SCZ_GO_mf(5)
+
+shared_asd_scz_mf_wes <- inner_join(asd_wes_mf, scz_wes_p2.14_mf, by="Term", suffix=c(".asd.wes.mf",".scz.wes.mf"))
+
+shared_asd_scz_mf_wes$Term
+
+```
+```{Gene ontology - ASD and SCZ - GWAS}
+
+#ASD_SCZ_GO_bp(0)
+
+shared_asd_scz_bp_gwas_1 <- inner_join(asd_gwas_bp, scz_gwas_bp, by="Term", suffix=c(".asd.gwas.bp",".scz.gwas.bp"))
+
+shared_asd_scz_bp_gwas_1$Term
+
+#ASD_SCZ_GO_cc(0)
+
+shared_asd_scz_cc_gwas_1 <- inner_join(asd_gwas_cc, scz_gwas_cc, by="Term", suffix=c(".asd.wgas.cc",".scz.gwas.cc"))
+
+shared_asd_scz_cc_gwas_1$Term
+
+#ASD_SCZ_GO_mf(0)
+
+shared_asd_scz_mf_gwas_1 <- inner_join(asd_gwas_mf, scz_gwas_mf, by="Term", suffix=c(".asd.gwas.mf",".scz.gwas.mf"))
+
+shared_asd_scz_mf_gwas_1$Term
+
+```
+```{pathway analysis - ASD and SCZ - WES}
+
+shared_asd_scz_pathway_wes <- inner_join(ASD_WES_FDR_0.05_pathway, SCZ_WES_pval_2.14e6_pathway, by="Term", suffix=c(".asd.wes.pathway",".scz.wes.pathway"))
+
+shared_asd_scz_pathway_wes$Term
+
+```
+
+```{upset R - ASD and BP}
+
+ASD_BP_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized,ASD_wes_fdr_0.05=asd_wes_fdr_0.05, BP_gwas_prioritized=bp_gwas_prioritized, BP_wes_top10=bp_wes_top10)
+
+upset(fromList(ASD_BP_listInput),set_size.show=T,nsets=6,set_size.scale_max = 220,order.by = "freq")
+
+```
+```{Gene ontology - ASD and BP - WES}
+
+#ASD_BP_GO_bp(12)
+
+shared_asd_bp_bp_wes <- inner_join(asd_wes_f0.001_bp, bp_wes_top10_bp, by="Term", suffix=c(".asd.wes.bp",".bp.wes.bp"))
+
+shared_asd_bp_bp_wes$Term
+
+#ASD_BP_GO_cc(0)
+
+shared_asd_bp_cc_wes <- inner_join(asd_wes_cc, bp_wes_top10_cc, by="Term", suffix=c(".asd.wes.cc",".bp.wes.cc"))
+
+shared_asd_bp_cc_wes$Term
+
+#ASD_BP_GO_mf(1)
+
+shared_asd_bp_mf_wes <- inner_join(asd_wes_mf, bp_wes_top10_mf, by="Term", suffix=c(".asd.wes.mf",".bp.wes.mf"))
+
+shared_asd_bp_mf_wes$Term
+
+```
+```{pathway analysis - ASD and BP - WES}
+
+shared_asd_bp_pathway_wes <- inner_join(ASD_WES_FDR_0.05_pathway, BP_WES_top10_pathway, by="Term", suffix=c(".asd.wes.pathway",".bp.wes.pathway"))
+
+shared_asd_bp_pathway_wes$Term
+
+??shared
+```
+
+```{upset R - ASD and DP}
+
+ASD_DP_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized,ASD_wes_fdr_0.05=asd_wes_fdr_0.05,DP_gwas_prioritized=dp_gwas_prioritized,DP_wes_fdr_0.1=dp_wes_fdr_0.1)
+
+upset(fromList(ASD_DP_listInput),set_size.show=T,nsets=6, order.by = "freq")
+
+```
+```{Gene ontology - ASD and DP - GWAS}
+
+#ASD_DP_GO_bp(2)
+
+shared_asd_dp_bp_gwas <- inner_join(asd_gwas_bp, dp_gwas_bp, by="Term", suffix=c(".asd.gwas.bp",".dp.gwas.bp"))
+
+shared_asd_dp_bp_gwas$Term
+
+#ASD_DP_GO_cc(0)
+
+shared_asd_dp_cc_gwas <- inner_join(asd_gwas_cc, dp_gwas_cc, by="Term", suffix=c(".asd.wgas.cc",".dp.gwas.cc"))
+
+shared_asd_dp_cc_gwas$Term
+
+#ASD_dp_GO_mf(0)
+
+shared_asd_dp_mf_gwas <- inner_join(asd_gwas_mf, dp_gwas_mf, by="Term", suffix=c(".asd.gwas.mf",".dp.gwas.mf"))
+
+shared_asd_dp_mf_gwas$Term
+
+```
+
+```{upset R - BP and SCZ}
+
+BP_SCZ_listInput <- list(BP_gwas_prioritized=bp_gwas_prioritized, BP_wes_top10 = bp_wes_top10,SCZ_gwas_prioritized=scz_gwas_prioritized,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,SCZ_wes_pval=scz_wes_pval)
+
+upset(fromList(BP_SCZ_listInput), order.by = "freq")
+
+```
+```{Gene ontology - BP and SCZ - WES}
+
+#BP_SCZ_GO_bp(4)
+
+shared_bp_scz_bp_wes <- inner_join(bp_wes_top10_bp, scz_wes_p2.14_bp, by="Term", suffix=c(".bp.wes.bp",".scz.wes.bp"))
+
+shared_bp_scz_bp_wes$Term
+
+#BP_SCZ_GO_cc(0)
+
+shared_bp_scz_cc_wes <- inner_join(bp_wes_top10_cc, scz_wes_p2.14_cc, by="Term", suffix=c(".bp.wes.cc",".scz.wes.cc"))
+
+shared_bp_scz_cc_wes$Term
+
+#BP_SCZ_GO_mf(2)
+
+shared_bp_scz_mf_wes <- inner_join(bp_wes_top10_mf, scz_wes_p2.14_mf, by="Term", suffix=c(".bp.wes.mf",".scz.wes.mf"))
+
+shared_bp_scz_mf_wes$Term
+
+```
+```{pathway analysis - BP and SCZ - WES}
+
+shared_bp_scz_pathway_wes <- inner_join(SCZ_WES_pval_2.14e6_pathway, BP_WES_top10_pathway, by="Term", suffix=c(".scz.wes.pathway",".bp.wes.pathway"))
+
+shared_bp_scz_pathway_wes$Term
+
+```
+
+```{upset R - DP and SCZ}
+
+DP_SCZ_listInput <- list(SCZ_gwas_prioritized=scz_gwas_prioritized,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,SCZ_wes_pval=scz_wes_pval,DP_gwas_prioritized=dp_gwas_prioritized,DP_wes_fdr_0.1=dp_wes_fdr_0.1)
+
+upset(fromList(DP_SCZ_listInput), order.by = "freq")
+
+```
+```{Gene ontology - DP and SCZ - GWAS}
+
+#DP_SCZ_GO_bp(0)
+
+shared_dp_scz_bp_gwas <- inner_join(dp_gwas_bp, scz_gwas_bp, by="Term", suffix=c(".dp.gwas.bp",".scz.gwas.bp"))
+
+shared_dp_scz_bp_gwas$Term
+
+#DP_SCZ_GO_cc(0)
+
+shared_dp_scz_cc_gwas <- inner_join(dp_gwas_cc, scz_gwas_cc, by="Term", suffix=c(".dp.gwas.cc",".scz.gwas.cc"))
+
+shared_dp_scz_cc_gwas$Term
+
+#DP_SCZ_GO_mf(0)
+
+shared_dp_scz_mf_gwas <- inner_join(dp_gwas_mf, scz_gwas_mf, by="Term", suffix=c(".dp.gwas.mf",".scz.gwas.mf"))
+
+shared_dp_scz_mf_gwas$Term
+
+```
+```{Gene ontology - DP and SCZ - WES}
+
+#DP_SCZ_GO_bp(0)
+
+shared_dp_scz_bp_wes <- inner_join(dp_wes_f0.1_bp, scz_wes_p2.14_bp, by="Term", suffix=c(".dp.wes.bp",".scz.wes.bp"))
+
+shared_dp_scz_bp_wes$Term
+
+#DP_SCZ_GO_cc(0)
+
+shared_dp_scz_cc_wes <- inner_join(dp_wes_f0.1_cc, scz_wes_p2.14_cc, by="Term", suffix=c(".dp.wes.cc",".scz.wes.cc"))
+
+shared_dp_scz_cc_wes$Term
+
+#DP_SCZ_GO_mf(0)
+
+shared_dp_scz_mf_wes <- inner_join(dp_wes_f0.1_mf, scz_wes_p2.14_mf, by="Term", suffix=c(".dp.wes.mf",".dp.wes.mf"))
+
+shared_dp_scz_mf_wes$Term
+
+```
+
+#The upset / Gene ontology analysis / pathway analysis of insight ALL 5's GWAS and WES 
+```{upset R - ALL GWAS/WES}
+
+#ALL_GWAS
+
+ALL_GWAS_listInput <- list(ASD_gwas_prioritized=asd_gwas_prioritized,ADHD_gwas=adhd_gwas,BP_gwas_prioritized=bp_gwas_prioritized,DP_gwas_prioritized=dp_gwas_prioritized,SCZ_gwas_prioritized=scz_gwas_prioritized)
+
+upset(fromList(ALL_GWAS_listInput), order.by = "freq")
+
+#bp_gwas_prioritized / dp_gwas_prioritized / scz_gwas_prioritized : FURIN
+#dp_gwas/scz_gwas:NEGR1
+#bp_gwas/scz_gwas:DCLK3
+#asd_gwas/dp_gwas: MACROD2
+#adhd_gwas/scz_gwas:HYI,DCC
+#asd_gwas/adhd_gwas:XRN2,NKX2-4
+
+
+#ALL_WES
+
+ALL_WES_listInput <- list(ASD_wes_fdr_0.001=asd_wes_fdr_0.001,BP_wes_top10=bp_wes_top10,DP_wes_fdr_0.1=dp_wes_fdr_0.1,SCZ_wes_fdr_0.05=scz_wes_fdr_0.05,SCZ_wes_pval=scz_wes_pval)
+#这里为了保险用了SCZ的两个cut-off,而然并没有区别
+
+upset(fromList(ALL_WES_listInput), order.by = "freq")
+
+#bp_wes_top10/scz_wes0.05:AKAP11
+#scz_wes0.05/asd_wes0.05:FAM120A,ZMYM2
+
+```
+```{Gene ontology - ALL5 - GWAS}
+
+##ALL5_GO_bp(2)
+
+#dp/scz:0
+shared_all5_bp <- inner_join(dp_gwas_bp , scz_gwas_bp,by="Term", suffix=c(".dp.gwas.bp",".scz.gwas.bp"))
+
+shared_all5_bp$Term
+
+#dp/asd:2
+
+shared_all5_bp_2 <- inner_join(dp_gwas_bp , asd_gwas_bp,by="Term", suffix=c(".dp.gwas.bp",".asd.gwas.bp"))
+
+shared_all5_bp_2$Term
+
+#[1] "Purine-Containing Compound Metabolic Process (GO:0072521)"
+#[2] "Nucleoside Metabolic Process (GO:0009116)"     
+
+#asd/scz:0
+
+shared_all5_bp_3 <- inner_join(scz_gwas_bp , asd_gwas_bp,by="Term", suffix=c("scz.gwas.bp",".asd.gwas.bp"))
+
+shared_all5_bp_3$Term
+
+
+##ALL5_GO_cc(0)
+
+#only asd/scz:0
+
+shared_all5_cc <- inner_join(asd_gwas_cc, scz_gwas_cc, by="Term", suffix=c(".asd.gwas.cc",".scz.gwas.cc"))
+
+shared_all5_cc$Term
+
+
+#all5_mf(0):only dp_gwas_mf available 
+
+```
+```{Gene ontology - ALL4 - WES}
+
+##ALL4_GO_bp(?)
+
+#bp/scz:4
+shared_all4_bp_wes <- inner_join(bp_wes_top10_bp, scz_wes_p2.14_bp,by="Term", suffix=c(".bp.wes.bp",".scz.wes.bp"))
+
+shared_all4_bp_wes$Term
+
+#bp/asd:12
+
+shared_all4_bp_wes_2 <- inner_join(bp_wes_top10_bp, asd_wes_f0.001_bp,by="Term", suffix=c(".bp.wes.bp",".asd.wes.bp"))
+
+shared_all4_bp_wes_2$Term
+
+#scz/asd:16
+
+shared_all4_bp_wes_3 <- inner_join(scz_wes_p2.14_bp, asd_wes_f0.001_bp,by="Term", suffix=c(".scz.wes.bp",".asd.wes.bp"))
+
+shared_all4_bp_wes_3$Term
+
+##ALL4_GO_cc(5)
+
+#only asd/scz:5
+
+shared_all4_cc_wes<- inner_join(scz_wes_p2.14_cc, asd_wes_cc,by="Term", suffix=c(".scz.wes.cc",".asd.wes.cc"))
+
+shared_all4_cc_wes$Term
+
+##all4_GO_mf(?)
+
+#bp/asd:1
+
+shared_all4_mf_wes<- inner_join(bp_wes_top10_mf, asd_wes_mf,by="Term", suffix=c(".bp.wes.mf",".asd.wes.mf"))
+
+shared_all4_mf_wes$Term
+
+#bp/scz:2
+
+shared_all4_cc_wes_2<- inner_join(bp_wes_top10_mf, scz_wes_p2.14_mf,by="Term", suffix=c(".bp.wes.mf",".scz.wes.mf"))
+
+shared_all4_cc_wes_2$Term
+
+#asd/scz:5
+
+shared_all4_mf_wes_3<- inner_join(scz_wes_p2.14_mf, asd_wes_mf,by="Term", suffix=c(".scz.wes.mf",".asd.wes.mf"))
+
+shared_all4_mf_wes_3$Term
+
+```
+```{pathway analysis - ALL5 _ GWAS}
+
+ADHD_GWAS_pathway (x)
+ASD_GWAS_prioritized_pathway (x)
+BP_GWAS_prioritized_pathway (x)
+DP_GWAS_prioritized_pathway (x)
+SCZ_GWAS_prioritized_pathway (9)
+
+```
+```{pathway analysis - ALL4 - WES}
+
+ASD_WES_FDR_0.05_pathway(55)
+ASD_WES_FDR_0.001._pathway(6)
+BP_WES_top10_pathway(1)
+DP_WES_FDR_0.1_pathway(x)
+SCZ_WES_FDR_0.05_pathway(3)
+SCZ_WES_pval_2.14e6_pathway(15)
+
+#asd/bp:0
+
+shared_all4_pathway_wes <- inner_join(ASD_WES_FDR_0.05_pathway, BP_WES_top10_pathway,by="Term", suffix=c(".asd.wes.pathway",".bp.wes.pathway"))
+
+shared_all4_pathway_wes$Term
+
+#asd/scz:10
+
+shared_all4_pathway_wes_2 <- inner_join(ASD_WES_FDR_0.05_pathway, SCZ_WES_pval_2.14e6_pathway,by="Term", suffix=c(".asd.wes.pathway",".scz.wes.pathway"))
+
+shared_all4_pathway_wes_2$Term
+
+#bp/scz:0
+
+shared_all4_pathway_wes_3 <- inner_join(SCZ_WES_pval_2.14e6_pathway, BP_WES_top10_pathway,by="Term", suffix=c(".scz.wes.pathway",".bp.wes.pathway"))
+
+shared_all4_pathway_wes_3$Term
+
+```
+
+#bubble diagram
+```{GO bubble diagram}
+library(ggplot2)
+library(vegan)
+
+##GWAS
+inputFile="df1.csv"         
+outFile="asd_gwas.pdf" 
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,17,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=11, height=14.5)      #保存
+
+
+######
+inputFile="df2.csv"         
+outFile="asd_wgs.pdf" 
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,17,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=19, height=28.5)      #保存
+
+
+####
+inputFile="df3.csv"         
+outFile="asd_wes_f0.001.pdf"
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,17,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=19, height=32)      #保存
+
+
+####
+inputFile="df4.csv"         
+outFile="scz_wes_p2.14.pdf"
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,17,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=16, height=18)      #保存
+
+
+
+####
+inputFile="df5.csv"         
+outFile="dp_gwas.pdf"
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=16, height=14.5)      #保存
+
+
+
+####
+inputFile="df6.csv"         
+outFile="bp_wes_top10.pdf"
+
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+unique(rt$group)
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value,shape=group,fill=log10_Adjusted_P_value))
+p1 = p + 
+  scale_shape_manual(values =c(16,15))+
+  scale_colour_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  scale_fill_gradient(low="#E1F6F8",high="#026165") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=22, height=15)      #保存
+
+```
+```{pathway bubble diagram}
+library(ggplot2)
+
+
+##GWAS
+inputFile="df1.csv"         
+outFile="ASD_WES_FDR_0.05_pathway.pdf" 
+
+# 读取文件  
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value))
+p1 = p + 
+  scale_colour_gradient(low="#FEE2EE",high="#890B4E") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=10, height=14.5)      #保存
+
+
+
+
+#########WGS
+inputFile="df2.csv"         
+outFile="ASD_WGS_FDR_0.1_pathway.pdf" 
+
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value))
+p1 = p + 
+  scale_colour_gradient(low="#FEE2EE",high="#890B4E") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=6, height=3)      #保存
+
+
+#########WES
+inputFile="df3.csv"         
+outFile="SCZ_GWAS_prioritized_pathway.pdf" 
+
+
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value))
+p1 = p + 
+  scale_colour_gradient(low="#FEE2EE",high="#890B4E") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=6.5, height=3.5)   
+
+
+
+
+inputFile="df4.csv"         
+outFile="SCZ_WES_pval_2.14e6_pathway.pdf" 
+
+rt = read.csv(inputFile, header=T, check.names=F)  
+head(rt)
+#按照Ratio对Term排序
+labels=rt[order(rt$gene_ratio),"Term"]
+rt$Term = factor(rt$Term,levels=labels)
+
+
+p = ggplot(rt,aes(gene_ratio, Term)) + 
+  geom_point(aes(size=counts, color=log10_Adjusted_P_value))
+p1 = p + 
+  scale_colour_gradient(low="#FEE2EE",high="#890B4E") +  # 设置渐变色
+  labs(size="counts",color="log10_Adjusted_P_value",x="gene_ratio",y="")+
+  theme(axis.text.x=element_text(color="black", size=10),
+        axis.text.y=element_text(color="black", size=10)) + 
+  theme_bw()+
+  guides(size=guide_legend(order = 1))+
+  theme(axis.title = element_text(size = 12,colour = "black"))+
+  theme(axis.text = element_text(size = 12,colour = "black"))+
+  theme(axis.line = element_line(colour = "black",size = 0.6))+
+  theme(axis.ticks = element_line(colour = "black",size = 0.6))+
+  theme(axis.text.x = element_text(colour = "black",size = 12))+
+  theme(axis.text.y = element_text(colour = "black",size = 12),
+        legend.text = element_text(size = 12),
+        legend.background = element_blank(),legend.position = "right")+
+  theme(text = element_text(family = "serif"))
+p1
+ggsave(outFile, width=7, height=4)      #保存
+
+```
+
+
+
+
+
